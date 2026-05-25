@@ -210,6 +210,9 @@ def build_modeling_dataset(tracts):
         "land_area_km2":
             df["land_area_km2"],
 
+        "distance_to_cbd_km":
+            df["distance_to_cbd_km"],
+
         # ---------------------------------------------
         # RACE / ETHNICITY
         # ---------------------------------------------

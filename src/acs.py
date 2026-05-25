@@ -6,15 +6,6 @@ def flatten_acs_variables():
 
     flat = {}
 
-    for category, variables in ACS_TABLES.items():
-        flat.update(variables)
-
-    return flat
-
-def flatten_acs_variables():
-
-    flat = {}
-
     for _, variables in ACS_TABLES.items():
         flat.update(variables)
 

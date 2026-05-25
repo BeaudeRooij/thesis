@@ -123,3 +123,52 @@ def load_tract_geometries(
     print("Geometry table ready.")
 
     return gdf
+
+from shapely.geometry import Point
+from .cbd import CBD_COORDINATES
+
+def add_cbd_distance(
+    gdf,
+    city_name
+):
+
+    if city_name not in CBD_COORDINATES:
+
+        raise ValueError(
+            f"No CBD coordinates found for {city_name}"
+        )
+
+    cbd = CBD_COORDINATES[city_name]
+
+    cbd_point = Point(
+        cbd["lon"],
+        cbd["lat"]
+    )
+
+    cbd_gdf = gpd.GeoDataFrame(
+        geometry=[cbd_point],
+        crs="EPSG:4326"
+    )
+
+    # -----------------------------------
+    # Project
+    # -----------------------------------
+
+    projected_crs = "EPSG:5070"
+
+    tracts_proj = gdf.to_crs(projected_crs)
+
+    cbd_proj = cbd_gdf.to_crs(projected_crs)
+
+    cbd_geom = cbd_proj.geometry.iloc[0]
+
+    # -----------------------------------
+    # Distance
+    # -----------------------------------
+
+    gdf["distance_to_cbd_km"] = (
+        tracts_proj.geometry.centroid.distance(cbd_geom)
+        / 1000
+    )
+
+    return gdf
