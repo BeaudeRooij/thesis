@@ -15,7 +15,7 @@ ACS_TABLES = {
         "households": "B11001_001E",
         "avg_household_size": "B25010_001E",
 
-        # UNDER 18
+        # under 18
         "m_under_5": "B01001_003E",
         "m_5_9": "B01001_004E",
         "m_10_14": "B01001_005E",

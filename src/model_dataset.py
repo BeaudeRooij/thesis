@@ -17,10 +17,7 @@ def build_modeling_dataset(tracts):
 
     df = tracts.copy()
 
-    # ---------------------------------------------------
-    # CORE DERIVED FEATURES
-    # ---------------------------------------------------
-
+    # Core derived features
     df["population_density"] = safe_divide(
         df["total_population"],
         df["land_area_km2"]
@@ -39,16 +36,13 @@ def build_modeling_dataset(tracts):
         - df["hispanic_latino"]
     )
 
-    # ---------------------------------------------------
-    # FINAL MODEL TABLE
-    # ---------------------------------------------------
-
+    # Final model table
     final = pd.DataFrame({
 
-        # IDENTIFIERS
+        # id
         "tract_id": df["tract_id"],
 
-        # CORE DEMOGRAPHICS
+        # Core demographics
         "total_population": df["total_population"],
         "population_density": df["population_density"],
 
@@ -62,7 +56,7 @@ def build_modeling_dataset(tracts):
 
         "households": df["households"],
 
-        # SOCIOECONOMIC
+        # Socioeconomic
         "median_household_income": df["median_income"],
         "per_capita_income": df["per_capita_income"],
 
@@ -76,12 +70,12 @@ def build_modeling_dataset(tracts):
             df["households"]
         ),
 
-        # EDUCATION
+        # Education
         "pct_high_school": df["pct_high_school"],
         "pct_bachelors_degree": df["pct_bachelors"],
         "pct_graduate_degree": df["pct_graduate_degree"],
 
-        # TRANSPORTATION
+        # Transportation
         "pct_no_vehicle_households": df["pct_no_vehicle"],
 
         "pct_one_vehicle_households": safe_divide(
@@ -107,7 +101,7 @@ def build_modeling_dataset(tracts):
         "pct_bike_commute": df["pct_bike_commute"],
         "pct_work_from_home": df["pct_wfh"],
 
-        # HOUSING
+        # Housing
         "housing_units": df["housing_units"],
 
         "occupied_housing_units": safe_divide(
@@ -135,11 +129,11 @@ def build_modeling_dataset(tracts):
 
         "median_year_built": df["median_year_built"],
 
-        # LAND / URBAN FORM
+        # Land / Urban form
         "land_area_km2": df["land_area_km2"],
         "distance_to_cbd_km": df["distance_to_cbd_km"],
 
-        # RACE / ETHNICITY
+        # Race / Ethnicity
         "pct_white_non_hispanic": df["pct_white_non_hispanic"],
         "pct_black": df["pct_black"],
         "pct_hispanic_latino": df["pct_hispanic_latino"],
@@ -155,7 +149,7 @@ def build_modeling_dataset(tracts):
         "node_density": df["node_density"],
         "street_density": df["street_density"],
 
-        # AMENITIES
+        # Amenities
         "restaurant_count": df["restaurant_count"],
         "restaurant_density": df["restaurant_density"],
 
@@ -181,10 +175,7 @@ def build_modeling_dataset(tracts):
         "transit_stop_density": df["transit_stop_density"],
     })
 
-    # ---------------------------------------------------
     # TYPE CLEANUP
-    # ---------------------------------------------------
-
     float_cols = final.select_dtypes(include=["float64"]).columns
     final[float_cols] = final[float_cols].astype("float32")
 

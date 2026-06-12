@@ -3,9 +3,7 @@ import pandas as pd
 import censusdata
 
 def flatten_acs_variables():
-
     flat = {}
-
     for _, variables in ACS_TABLES.items():
         flat.update(variables)
 
@@ -19,13 +17,10 @@ def load_acs_data(
 ):
 
     acs_vars = flatten_acs_variables()
-
     variable_codes = list(acs_vars.values())
-
     all_tables = []
 
     for county in county_fips_list:
-
         geo = censusdata.censusgeo([
             ("state", state_fips),
             ("county", county),
@@ -67,10 +62,7 @@ def compute_acs_features(df):
 
     df = df.copy()
 
-    # -----------------------------------------
     # Missing ACS values
-    # -----------------------------------------
-
     missing_codes = [
         -666666666,
         -333333333,
@@ -87,10 +79,7 @@ def compute_acs_features(df):
             df[col].isin(missing_codes)
         )
 
-    # -----------------------------------------
-    # AGE GROUPS
-    # -----------------------------------------
-
+    # Age groups
     under_18_cols = [
         "m_under_5",
         "m_5_9",
@@ -131,10 +120,7 @@ def compute_acs_features(df):
         - df["population_over_65"]
     )
 
-    # -----------------------------------------
-    # DEMOGRAPHIC RATES
-    # -----------------------------------------
-
+    # Demographic rates
     df["pct_under_18"] = (
         df["population_under_18"]
         / df["total_population"]
@@ -155,10 +141,7 @@ def compute_acs_features(df):
         / df["female_population"]
     )
 
-    # -----------------------------------------
-    # EDUCATION
-    # -----------------------------------------
-
+    # Education
     df["graduate_degree"] = (
         df["masters"]
         + df["professional"]
@@ -180,10 +163,7 @@ def compute_acs_features(df):
         / df["pop_25_plus"]
     )
 
-    # -----------------------------------------
-    # ECONOMICS
-    # -----------------------------------------
-
+    # Economics
     df["poverty_rate"] = (
         df["below_poverty"]
         / df["poverty_total"]
@@ -209,10 +189,7 @@ def compute_acs_features(df):
         / df["households"]
     )
 
-    # -----------------------------------------
-    # TRANSPORTATION
-    # -----------------------------------------
-
+    # Transportation
     df["pct_no_vehicle"] = (
         df["no_vehicle_households"]
         / df["households"]
@@ -238,10 +215,7 @@ def compute_acs_features(df):
         / df["workers_total"]
     )
 
-    # -----------------------------------------
-    # HOUSING
-    # -----------------------------------------
-
+    # Housing
     df["vacancy_rate"] = (
         df["vacant_units"]
         / df["housing_units"]
@@ -252,10 +226,7 @@ def compute_acs_features(df):
         / df["occupied_units"]
     )
 
-    # -----------------------------------------
-    # RACE / ETHNICITY
-    # -----------------------------------------
-
+    # Race/Ethnicity
     race_groups = [
         "white_non_hispanic",
         "black",

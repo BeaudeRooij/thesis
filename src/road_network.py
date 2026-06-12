@@ -1,4 +1,3 @@
-
 import geopandas as gpd
 import pandas as pd
 import osmnx as ox
@@ -37,29 +36,21 @@ def compute_network_features(
     Returns tract-level GeoDataFrame with added features.
     """
 
-    # -----------------------------
     # Load + convert OSM graph
-    # -----------------------------
     G = load_osm_graph(county_names)
 
     nodes, edges = ox.graph_to_gdfs(G)
 
-    # -----------------------------
-    # Project everything
-    # -----------------------------
     tracts = tracts_gdf.to_crs(projected_crs)
     nodes = nodes.to_crs(projected_crs)
     edges = edges.to_crs(projected_crs)
 
-    # Ensure area exists (km²)
     if "land_area_km2" not in tracts.columns:
         tracts["land_area_km2"] = tracts.geometry.area / 1e6
 
     area = tracts.set_index("tract_id")["land_area_km2"]
 
-    # -----------------------------
-    # NODE DENSITY
-    # -----------------------------
+    # Node density
     nodes_in_tracts = gpd.sjoin(
         nodes,
         tracts[["tract_id", "geometry"]],
@@ -71,9 +62,7 @@ def compute_network_features(
         / area
     ).rename("node_density")
 
-    # -----------------------------
-    # INTERSECTIONS
-    # -----------------------------
+    # Intersection density
     G_undirected = ox.convert.to_undirected(G)
     degree = dict(G_undirected.degree())
 
@@ -92,9 +81,7 @@ def compute_network_features(
         / area
     ).rename("intersection_density")
 
-    # -----------------------------
-    # STREET DENSITY
-    # -----------------------------
+    # Street density
     edges_with_tracts = gpd.overlay(
         edges,
         tracts[["tract_id", "geometry"]],
@@ -108,9 +95,7 @@ def compute_network_features(
         / area
     ).rename("street_density")
 
-    # -----------------------------
-    # MERGE OUTPUT
-    # -----------------------------
+    # Merge output
     features = pd.concat(
         [node_density, intersection_density, street_density],
         axis=1

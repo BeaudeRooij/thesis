@@ -10,19 +10,15 @@ def load_tract_geometries(
     """
     Load Census tract geometries from TIGER/Line.
 
-    Parameters
-    ----------
+    Parameters:
     state_fips : str
         State FIPS code.
-
     county_fips_list : list[str] or None
         Optional county filters.
-
     year : int
         TIGER vintage year.
 
-    Returns
-    -------
+    Returns:
     GeoDataFrame
     """
 
@@ -37,10 +33,7 @@ def load_tract_geometries(
 
     print("Raw tracts:", len(gdf))
 
-    # ---------------------------------------------------
     # Filter counties
-    # ---------------------------------------------------
-
     if county_fips_list is not None:
 
         gdf = gdf[
@@ -48,10 +41,6 @@ def load_tract_geometries(
         ].copy()
 
         print("Filtered tracts:", len(gdf))
-
-    # ---------------------------------------------------
-    # CRS cleanup
-    # ---------------------------------------------------
 
     gdf = gdf.to_crs(epsg=4326)
 
@@ -65,29 +54,20 @@ def load_tract_geometries(
         gdf.is_valid
     ].copy()
 
-    # ---------------------------------------------------
     # Area calculations
-    # ---------------------------------------------------
-
     gdf_proj = gdf.to_crs(epsg=3857)
 
     gdf["land_area_km2"] = (
         gdf_proj.geometry.area / 1e6
     )
 
-    # ---------------------------------------------------
     # Centroids
-    # ---------------------------------------------------
-
     centroids = gdf_proj.centroid.to_crs(epsg=4326)
 
     gdf["centroid_lon"] = centroids.x
     gdf["centroid_lat"] = centroids.y
 
-    # ---------------------------------------------------
     # Standardized IDs
-    # ---------------------------------------------------
-
     gdf["tract_id"] = gdf["GEOID"]
 
     gdf["state_fips"] = gdf["tract_id"].str[:2]
@@ -96,10 +76,7 @@ def load_tract_geometries(
 
     gdf["tract_code"] = gdf["tract_id"].str[5:]
 
-    # ---------------------------------------------------
     # Final columns
-    # ---------------------------------------------------
-
     keep_cols = [
 
         "tract_id",
@@ -150,10 +127,7 @@ def add_cbd_distance(
         crs="EPSG:4326"
     )
 
-    # -----------------------------------
     # Project
-    # -----------------------------------
-
     projected_crs = "EPSG:5070"
 
     tracts_proj = gdf.to_crs(projected_crs)
@@ -162,10 +136,7 @@ def add_cbd_distance(
 
     cbd_geom = cbd_proj.geometry.iloc[0]
 
-    # -----------------------------------
     # Distance
-    # -----------------------------------
-
     gdf["distance_to_cbd_km"] = (
         tracts_proj.geometry.centroid.distance(cbd_geom)
         / 1000

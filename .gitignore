@@ -1,4 +1,7 @@
 /notebooks/cache/
+/notebooks/intermediate/
+
+/src/__pycache__/
 
 /data/
 

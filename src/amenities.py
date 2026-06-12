@@ -2,10 +2,7 @@ import pandas as pd
 import geopandas as gpd
 import osmnx as ox
 
-
-# ---------------------------------------------------
-# DEFAULT AMENITIES (your target features only)
-# ---------------------------------------------------
+# Amenities
 AMENITIES = {
     "restaurant": {"amenity": "restaurant"},
     "cafe": {"amenity": "cafe"},
@@ -17,10 +14,7 @@ AMENITIES = {
     "transit_stop": {"highway": "bus_stop"},
 }
 
-
-# ---------------------------------------------------
-# OSM LOADER (robust)
-# ---------------------------------------------------
+# Osm loader
 def load_amenities_from_places(place_list, tags):
     gdfs = []
 
@@ -43,10 +37,7 @@ def load_amenities_from_places(place_list, tags):
 
     return pd.concat(gdfs, ignore_index=True)
 
-
-# ---------------------------------------------------
-# MAIN FEATURE FUNCTION (TRACT-COMPATIBLE)
-# ---------------------------------------------------
+# Feature engineering
 def compute_amenity_features(
     tracts_gdf: gpd.GeoDataFrame,
     counties,
@@ -83,24 +74,20 @@ def compute_amenity_features(
         if gdf is None:
             continue
 
-        # ensure CRS consistency
         gdf = gpd.GeoDataFrame(gdf, geometry="geometry", crs="EPSG:4326")
         gdf = gdf.to_crs(projected_crs)
 
-        # spatial join using YOUR tract schema
         joined = gpd.sjoin(
             gdf,
             tracts[["tract_id", "geometry"]],
             predicate="within"
         )
 
-        # counts per tract
         counts = (
             joined.groupby("tract_id").size()
             .rename(f"{name}_count")
         )
 
-        # density per km²
         density = (counts / area).rename(f"{name}_density")
 
         feature_frames.append(
