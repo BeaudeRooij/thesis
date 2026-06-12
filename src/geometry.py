@@ -22,7 +22,7 @@ def load_tract_geometries(
     GeoDataFrame
     """
 
-    print(f"Loading tract geometries for state {state_fips}...")
+    # print(f"Loading tract geometries for state {state_fips}...")
 
     url = (
         f"https://www2.census.gov/geo/tiger/TIGER{year}/"
@@ -31,7 +31,7 @@ def load_tract_geometries(
 
     gdf = gpd.read_file(url)
 
-    print("Raw tracts:", len(gdf))
+    # print("Raw tracts:", len(gdf))
 
     # Filter counties
     if county_fips_list is not None:
@@ -40,7 +40,7 @@ def load_tract_geometries(
             gdf["COUNTYFP"].isin(county_fips_list)
         ].copy()
 
-        print("Filtered tracts:", len(gdf))
+        # print("Filtered tracts:", len(gdf))
 
     gdf = gdf.to_crs(epsg=4326)
 
@@ -97,7 +97,7 @@ def load_tract_geometries(
         keep_cols
     ].copy()
 
-    print("Geometry table ready.")
+    # print("Geometry table ready.")
 
     return gdf
 
